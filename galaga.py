@@ -5,15 +5,16 @@ import globalvars
 from sprites import Player, Enemy, WilyEnemy, EnemyManager, Bullet, EnemyBullet, bgstars
 from display import *
 from menu import Menu
-from display import points, bullets
 from twisted.internet import reactor
 
 class Galaga:
-	def __init__(self, player=0):
+	def __init__(self, playerNum):
 		self.isPlayer1 = False
-		if player == 1:
+		if playerNum == 1:
 			self.isPlayer1 = True
 		globalvars.frames = 0
+
+		pygame.init()
 		self.lagcount=0
 		self.enemy_list=[]
 		self.list_enemies=EnemyManager()
@@ -34,8 +35,8 @@ class Galaga:
 	def clear(self):
 		self.leftkeydown=0
 		self.rightkeydown=0
-		health.set_health(globalvars.max_health)
-		points.set_points(0)
+		#health.set_health(globalvars.max_health)
+		#points.set_points(0)
 		globalvars.x=400
 		globalvars.y=globalvars.WIN_RESY-60
 		self.level.set_level(-1) #hax
@@ -72,19 +73,19 @@ class Galaga:
 		for enemy,bullet in todie.iteritems():
 			self.ally_bullets.remove(bullet)
 			enemy.set_state(0)
-			points.add_points(1)
+			#points.add_points(1)
 			self.player1.bullets += 5
-			bullets.add_bullets(5)
+			##bullets.add_bullets(5)
 		if pygame.sprite.spritecollideany(self.player1, self.enemy_bullets):
 			self.player1.set_hit()
-			health.hit()
+			#health.hit()
 
 	def check_over(self):
 		if not self.list_enemies:
 			self.level.next_level()
 			self.draw_enemies()
 			self.player1.bullets += 10
-			bullets.add_bullets(10)
+			#bullets.add_bullets(10)
 
 	def check_rows(self):
 		if globalvars.frames % 20==0:
@@ -103,9 +104,13 @@ class Galaga:
 					enemy.set_range(e_range[0]-lowest,e_range[1]+highest)
 
 	def again(self):
+		'''
 				if health.get_health() <= 0:
 						return False
 				return True
+		'''
+		return True
+
 
 	def pshoot(self, sx, sy):
 		self.player1.shoot(self.ally_bullets,sx,sy)
@@ -229,10 +234,10 @@ class level:
 		return self.current_level + 1
 
 if __name__ == "__main__":
-	game=Galaga()
+	game=Galaga(1)
 	Menu(("Press Enter To Begin", "Press Q or esc to Exit"))
 
 	game.start()
-	while Menu(("Score: %s"%points.get_points(),"Press Enter to Return to Main")):
+	while Menu(("Score: "'''%points.get_points()''',"Press Enter to Return to Main")):
 		Menu(("Press Enter To Begin", "Press Q or esc to Exit"))
 		game.start()
