@@ -9,7 +9,7 @@ from twisted.internet import reactor
 from twisted.internet.defer import DeferredQueue
 from twisted.internet.task import LoopingCall
 import json
-import globalvars
+# import globalvars
 
 ################### Globals
 PLAYER1_PORT = 40009
