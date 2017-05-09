@@ -100,7 +100,6 @@ class Health(pygame.sprite.Sprite):
 			self.healthrect=self.healthimg.get_rect()
 			self.healthrect.move_ip(0,self.textrect.height)
 			pygame.Surface.blit(self.image,self.healthimg,self.healthrect)
-			#print "Health Decreased to "+str(self.total_health)
 			self.temp=0
 
 

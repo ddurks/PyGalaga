@@ -88,4 +88,4 @@ screen.fill(bgcolor)
 
 pygame.init()
 
-print "Globals Loaded"
+print ("Globals Loaded")

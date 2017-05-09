@@ -10,7 +10,7 @@ def load_image(name):
         imgfile=os.path.join(name)
         return pygame.image.load(imgfile).convert()
     except:
-        print "Failed while loading " + name
+        print( "Failed while loading " + name )
 
 global explosions
 explosions=[]
@@ -309,7 +309,6 @@ class BackgroundManager(pygame.sprite.Sprite):
 	def add_star(self):
 		size=random.randint(2,7)
 		size1=size
-		print(size, size1)
 		x=random.randint(0,globalvars.WIN_RESX)
 		rect=star(x,0,size,size1)
 		rect.set_speed(random.randint(2,globalvars.BG_Speed))

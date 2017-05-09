@@ -32,7 +32,7 @@ class Game:
 		self.ally_bullets.empty()
 		globalvars.PLAYERS.empty()
 		self.enemy_bullets.empty()
-		print "Restart"
+		print ("Restart")
 
 	def player_move(self, x,y):
 		globalvars.PLAYERS.clear(globalvars.surface,globalvars.screen)
@@ -75,7 +75,7 @@ class Game:
 			self.level.next_level()
 			self.draw_enemies()
 			self.player.bullets += 10
-						bullets.add_bullets(10)
+			bullets.add_bullets(10)
 
 	def check_rows(self):
 		if globalvars.frames % 20==0:

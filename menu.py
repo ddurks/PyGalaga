@@ -7,7 +7,7 @@ def load_image(name):
         imgfile=os.path.join(name)
         return pygame.image.load(imgfile).convert()
     except:
-        print "Failed while loading " + name
+        print ("Failed while loading " + name)
 
 class Menu:
 	def __init__(self, menulabels):
