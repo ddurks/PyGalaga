@@ -5,11 +5,10 @@ import globalvars
 from sprites import Player, Enemy, WilyEnemy, EnemyManager, Bullet, EnemyBullet, bgstars
 from display import *
 from menu import Menu
-from display import points
+from display import points, bullets
 
 class Game:
-	def __init__(self,parent):
-		self.parent=parent
+	def __init__(self):
 		globalvars.frames = 0
 		self.lagcount=0
 		self.leftkeydown=0
@@ -33,7 +32,7 @@ class Game:
 		self.ally_bullets.empty()
 		globalvars.PLAYERS.empty()
 		self.enemy_bullets.empty()
-		print "Game Restarted"
+		print "Restart"
 
 	def player_move(self, x,y):
 		globalvars.PLAYERS.clear(globalvars.surface,globalvars.screen)
@@ -63,6 +62,7 @@ class Game:
 			enemy.set_state(0)
 			points.add_points(1)
 			self.player.bullets += 5
+			bullets.add_bullets(5)
 		if pygame.sprite.spritecollideany(self.player, self.enemy_bullets):
 			self.player.set_hit()
 			health.hit()
@@ -75,6 +75,7 @@ class Game:
 			self.level.next_level()
 			self.draw_enemies()
 			self.player.bullets += 10
+						bullets.add_bullets(10)
 
 	def check_rows(self):
 		if globalvars.frames % 20==0:
@@ -93,9 +94,9 @@ class Game:
 					enemy.set_range(e_range[0]-lowest,e_range[1]+highest)
 
 	def again(self):
-                if health.get_health() <= 0:
-                        return False
-                return True
+				if health.get_health() <= 0:
+						return False
+				return True
 
 	def pshoot(self, sx, sy):
 		self.player.shoot(self.ally_bullets,sx,sy)
@@ -107,7 +108,7 @@ class Game:
 		self.enemy_list+=self.enemy_bullets.draw(globalvars.surface)
 
 	def draw_stats(self):
-		if globalvars.frames%10==0:
+		if globalvars.frames%5==0:
 			globalvars.SIDE_PANEL.update()
 		globalvars.SIDE_PANEL.clear(globalvars.surface,globalvars.screen)
 		self.enemy_list+=globalvars.SIDE_PANEL.draw(globalvars.surface)
@@ -139,15 +140,11 @@ class Game:
 		pygame.display.flip()
 
 	def input(self, events):
-		global x
-		global y
+
 		pygame.event.pump()
 		for event in events:
 			if event.type == QUIT:
 				sys.exit(0)
-
-			if event.type == pygame.MOUSEBUTTONDOWN:
-				self.pshoot(self.player.rect.centerx-globalvars.BULLET_WIDTH/2,globalvars.y)
 
 			if event.type == pygame.KEYDOWN:
 				if event.key == pygame.K_q:
@@ -225,14 +222,11 @@ class level:
 	def get_levelnum(self):
 		return self.current_level + 1
 
-class PyGalaga:
-	def __init__(self):
-		self.game=Game(self)
+if __name__ == "__main__":
+	game=Game()
+	Menu(("Press Enter To Begin", "Press Q or esc to Exit"))
+
+	game.start()
+	while Menu(("Score: %s"%points.get_points(),"Press Enter to Return to Main")):
 		Menu(("Press Enter To Begin", "Press Q or esc to Exit"))
-
-		self.game.start()
-		while Menu(("Score: %s"%points.get_points(),"Press Enter to Return to Main")):
-			Menu(("Press Enter To Begin", "Press Q or esc to Exit"))
-			self.game.start()
-
-game=PyGalaga()
+		game.start()

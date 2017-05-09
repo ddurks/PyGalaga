@@ -3,6 +3,7 @@
 import pygame, os, sys, math, random
 from globalvars import explosion_speed, GAMEWINDOW
 import globalvars
+from display import bullets
 
 def load_image(name):
     try:
@@ -32,7 +33,8 @@ class Player(pygame.sprite.Sprite):
 		self.rect = self.image.get_rect()
 		self.state=0
 		self.speed=10
-		self.bullets=10
+		self.bullets=20
+                bullets.set_bullets(20)
 
 	def get_pos(self):
 		return self.rect
@@ -67,6 +69,7 @@ class Player(pygame.sprite.Sprite):
 			self.boom.set_pos(locx,locy)
 			shotslist.add(self.boom)
 			self.bullets -= 1
+                        bullets.sub_bullets(1)
 		else:
 			print("out of bullets")
 
