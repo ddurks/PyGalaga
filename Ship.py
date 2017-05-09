@@ -24,6 +24,7 @@ class PlayerConnection(LineReceiver):
     def __init__(self, game):
         self.game = game
         self.game.transferConnectionObject(self)
+        self.game.start()
 
     def lineReceived(self, line):
         self.handleReceivedData(line)
