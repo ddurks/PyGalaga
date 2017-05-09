@@ -1,7 +1,7 @@
 
 import pygame, os, sys, math, random
 import globalvars
-
+'''
 class Points(pygame.sprite.Sprite):
 	total_points=0
 	temp=0
@@ -9,7 +9,7 @@ class Points(pygame.sprite.Sprite):
 
 	def __init__(self):
 		pygame.sprite.Sprite.__init__(self)
-		self.font = pygame.font.Font(globalvars.defaultfont, globalvars.defaultsize)
+		self.font = pygame.font.Font("freesansbold.ttf", 14)
 		self.rect = pygame.Rect(globalvars.points_x, globalvars.points_y, 10, 10)
         	self.textimg=self.font.render(self.pointstr, 0, (128, 128, 128))
 		self.textrect=self.textimg.get_rect()
@@ -57,7 +57,7 @@ class Health(pygame.sprite.Sprite):
 
 	def __init__(self):
 		pygame.sprite.Sprite.__init__(self)
-		self.font = pygame.font.Font(globalvars.defaultfont, globalvars.defaultsize)
+		self.font = pygame.font.Font("freesansbold.ttf", 14)
 		self.rect = pygame.Rect(globalvars.health_x, globalvars.health_y, 10, 20)
 		self.textimg=self.font.render(self.healthstr, 0, (128, 128, 128))
 		self.textrect=self.textimg.get_rect()
@@ -115,7 +115,7 @@ class BulletNum(pygame.sprite.Sprite):
 
 	def __init__(self):
 		pygame.sprite.Sprite.__init__(self)
-		self.font = pygame.font.Font(globalvars.defaultfont, globalvars.defaultsize)
+		self.font = pygame.font.Font("freesansbold.ttf", 14)
 		self.rect = pygame.Rect(globalvars.bullets_x, globalvars.bullets_y, 10, 10)
 		self.textimg=self.font.render(self.bulletstr, 0, (128, 128, 128))
 		self.textrect=self.textimg.get_rect()
@@ -165,3 +165,4 @@ globalvars.SIDE_PANEL.add(bullets)
 global health
 health=Health()
 globalvars.SIDE_PANEL.add(health)
+'''

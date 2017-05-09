@@ -1,6 +1,5 @@
 import pygame, os, sys, math, random
 import globalvars
-from display import points
 
 def load_image(name):
     try:
