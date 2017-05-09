@@ -1,7 +1,7 @@
 import pygame, os
 
 global FPS
-FPS=50
+FPS=60
 
 global WIN_RESX
 WIN_RESX=800
