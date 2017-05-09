@@ -12,7 +12,7 @@ from twisted.protocols.basic import LineReceiver
 from twisted.internet.protocol import ClientFactory
 from twisted.internet.protocol import Protocol
 from twisted.internet import reactor
-from mario_game import MarioKart
+from galaga import Galaga
 from twisted.internet.task import LoopingCall
 
 GAME_SERVER = 'newt.campus.nd.edu'
