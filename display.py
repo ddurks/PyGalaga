@@ -1,7 +1,7 @@
 
 import pygame, os, sys, math, random
 import globalvars
-'''
+
 class Points(pygame.sprite.Sprite):
 	total_points=0
 	temp=0
@@ -165,4 +165,3 @@ globalvars.SIDE_PANEL.add(bullets)
 global health
 health=Health()
 globalvars.SIDE_PANEL.add(health)
-'''

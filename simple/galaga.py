@@ -135,10 +135,16 @@ class Galaga:
 		self.screen.blit(self.background, self.bgrect)
 		self.screen.blit(self.player1.image, self.player1.rect)
 		self.screen.blit(self.player2.image, self.player2.rect)
-		#self.bullets1.clear(self.screen, self.background)
-		#self.bullets2.clear(self.screen, self.background)
-		self.bulletlist+=self.bullets1.draw(self.screen, self.background)
-		self.bulletlist+=self.bullets2.draw(self.screen, self.background)
+		try:
+			self.bullets1.clear(self.screen, self.background)
+			self.bullets2.clear(self.screen, self.background)
+			self.bulletlist+=self.bullets1.draw(self.screen)
+			self.bulletlist+=self.bullets2.draw(self.screen)
+			self.bullets1.update()
+			self.bullets2.update()
+		except Exception as e:
+			print(e)
+
 
 		pygame.display.update(self.bulletlist)
 		pygame.display.flip()
