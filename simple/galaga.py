@@ -164,6 +164,7 @@ class Bullet(pygame.sprite.Sprite):
 class Galaga:
 	def __init__(self, playerNum):
 		self.isPlayer1 = False
+		self.isPlayer2 = False
 		self.begin = 0
 		if playerNum == 1:
 			self.isPlayer1 = True
@@ -192,8 +193,8 @@ class Galaga:
 
 	def tick(self):
 
-		#if self.isPlayer1 == False:
-		#	self.sendData("0")
+		if self.isPlayer2:
+			self.sendData("0")
 
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
@@ -239,7 +240,7 @@ class Galaga:
 		#draw enemies
 		try:
 
-			if not self.enemies and self.isPlayer2:
+			if not self.enemies and self.begin:
 				for i in range(5):
 					wily = WilyEnemy(self.enemies)
 					wily.set_pos(400,300)
@@ -278,7 +279,7 @@ class Galaga:
 			self.player1.shoot(self.bullets1, self.player1.rect.centerx, self.player1.rect.top)
 		elif data['p2Shot'] == '1':
 			self.player2.shoot(self.bullets2, self.player2.rect.centerx, self.player2.rect.top)
-		if data['start'] == '1':
+		elif data['start'] == '1':
 			self.begin = 1
 
 if __name__ == "__main__":
