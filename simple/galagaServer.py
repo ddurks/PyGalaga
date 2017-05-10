@@ -119,7 +119,7 @@ class Player1_Connection(Protocol):
 
     def getPlayer2_Connection(self, player2_conn):
         self.player2_conn = player2_conn
-        string = json.dumps({'start':'1'})
+        string = json.dumps({'beginthegame':'1'})
         self.sendData(string)
 
 class Player1_ConnFactory(Factory):

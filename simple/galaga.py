@@ -267,6 +267,9 @@ class Galaga:
 		self.outgoingConn = obj
 
 	def handleData(self, data):
+		if data['beginthegame'] == '1':
+			self.begin = 1
+
 		if data['p1Ship_l'] == '1':
 			self.player1.move_one(0)
 		elif data['p1Ship_r'] == '1':
@@ -279,8 +282,3 @@ class Galaga:
 			self.player1.shoot(self.bullets1, self.player1.rect.centerx, self.player1.rect.top)
 		elif data['p2Shot'] == '1':
 			self.player2.shoot(self.bullets2, self.player2.rect.centerx, self.player2.rect.top)
-		elif data['start'] == '1':
-			self.begin = 1
-
-if __name__ == "__main__":
-	game=Galaga(1)
