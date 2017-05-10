@@ -1,5 +1,5 @@
 import pygame, os, sys, math, random
-import reactor
+from twisted.internet import reactor
 
 global WIN_RESX, WIN_RESY
 WIN_RESX=800
@@ -41,17 +41,10 @@ class Player(pygame.sprite.Sprite):
 	def move_one(self,direction):
 		if direction == 1:
 			self.rect.move_ip(self.speed,0)
-			if not self.in_range(self.rect):
-				self.rect.move_ip((-1)*self.speed,0)
+
 		elif direction == 0:
 			self.rect.move_ip((-1)*self.speed,0)
-			if not self.in_range(self.rect):
-				self.rect.move_ip(self.speed,0)
 
-	def in_range(self,rect):
-		if GAMEWINDOW.contains(rect):
-			return True
-		return False
 
 	def set_pos(self, tempx,tempy):
 		self.rect.move_ip(tempx,tempy)
@@ -84,6 +77,8 @@ class Galaga:
 			self.isPlayer1 = True
 		pygame.init()
 		self.screen = pygame.display.set_mode ((WIN_RESX, WIN_RESY))
+		self.background = load_image("images/stars.bmp")
+		self.bgrect = self.background.get_rect()
 		pygame.display.set_caption("PyGalaga")
 		self.screen.fill((0,0,0))
 		self.player1=Player()
@@ -109,6 +104,7 @@ class Galaga:
 				if event.key == 276 or event.key == 275 or event.key == 32:
 					self.sendData(event.key)
 
+		self.screen.blit(self.background, self.bgrect)
 		self.screen.blit(self.player1.image, self.player1.rect)
 		self.screen.blit(self.player2.image, self.player2.rect)
 
