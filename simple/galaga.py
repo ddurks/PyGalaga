@@ -168,6 +168,7 @@ class Galaga:
 		if playerNum == 1:
 			self.isPlayer1 = True
 		if playerNum == 2:
+			self.isPlayer1 = True
 			self.sendData("0")
 		pygame.init()
 		self.screen = pygame.display.set_mode ((WIN_RESX, WIN_RESY))
