@@ -193,8 +193,11 @@ class Galaga:
 
 	def tick(self):
 
-		if not self.isPlayer1:
-			self.sendData('100')
+		try:
+			if not self.isPlayer1:
+				self.sendData('100')
+		except Exception as e:
+			print(e)
 
 
 		for event in pygame.event.get():

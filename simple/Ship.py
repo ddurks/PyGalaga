@@ -60,10 +60,11 @@ if __name__ == "__main__":
         reactor.connectTCP(GAME_SERVER, PORT1, PlayerConnectionFactory(game))
     elif sys.argv[1] == 'join':
         game = Galaga(2)
+        reactor.connectTCP(GAME_SERVER, PORT2, PlayerConnectionFactory(game))
         DESIRED_FPS = 30.0
         tick = LoopingCall(game.tick)
         tick.start(1.0 / DESIRED_FPS)
-        reactor.connectTCP(GAME_SERVER, PORT2, PlayerConnectionFactory(game))
+
     else:
         print "Please invoke program with correct arguments."
         sys.exit(0)
