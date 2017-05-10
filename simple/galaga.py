@@ -233,8 +233,10 @@ class Galaga:
 					sys.exit(0)
 				if event.key == 276 or event.key == 275 or event.key == 32:
 					if not self.enemies:
+						print("fuck fuck")
 						self.sendData(event.key, 1)
 					else:
+						print("sending data")
 						self.sendData(event.key, 0)
 		try:
 			#check collisions
@@ -316,8 +318,9 @@ class Galaga:
 		elif data['p2Shot'] == '1':
 			self.player2.shoot(self.bullets2, self.player2.rect.centerx, self.player2.rect.top)
 		if data['speedSet'] == '1':
-			self.newx = data['speedx']
-			self.newy = data['speedy']
+			print("getting speeds")
+			self.newx = int(data['speedx'])
+			self.newy = int(data['speedy'])
 
 if __name__ == "__main__":
 	game=Galaga(1)

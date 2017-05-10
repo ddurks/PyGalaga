@@ -91,7 +91,7 @@ class GameState:
                 self.p2Shot = '1'
 
         elif dataList[0] == '3':
-            if dataList[1] = '1':
+            if dataList[1] == '1':
                 self.randx = random.randrange(-15,15)
                 self.randy = random.randrange(-15,15)
                 self.set = 1
@@ -103,10 +103,6 @@ class GameState:
         else:
             print "Error: unexpected data sent from Player"
 
-
-
-        self.enemyPositions = [(0,20),]
-
         return_string = json.dumps({
                                     'p1Ship_l':self.p1SHIP_l,
                                     'p1Ship_r':self.p1SHIP_r,
@@ -114,8 +110,8 @@ class GameState:
                                     'p2Ship_r':self.p2SHIP_r,
                                     'p1Shot':self.p1Shot,
                                     'p2Shot':self.p2Shot,
-                                    'speedx':self.randx,
-                                    'speedy':self.randy,
+                                    'speedx':str(self.randx),
+                                    'speedy':str(self.randy),
                                     'speedSet':str(self.set),
                                     })
         self.player1_Conn.sendData(return_string)
