@@ -52,7 +52,6 @@ class GameState:
         if dataList[1] == '-1':
             return
         if dataList[0] == '1':
-            # MARIO
             if dataList[1] == '275': # RIGHT
                 self.p1SHIP_r = '1'
             elif dataList[1] == '276': # LEFT
@@ -61,7 +60,7 @@ class GameState:
                 self.p1Shot = '1'
 
         elif dataList[0] == '2':
-			# YOSHI
+
             if dataList[1] == '275': # RIGHT
                 self.p2SHIP_r = '1'
             elif dataList[1] == '276': # LEFT
@@ -74,9 +73,6 @@ class GameState:
         else:
             print "Error: unexpected data sent from Player"
 
-        # self.applyBoosts() # if either player ran over a boost, apply it
-        # self.checkWinner() # check at each tick if a player has won
-
 
         return_string = json.dumps({
                                     'p1Ship_l':self.p1SHIP_l,
@@ -85,7 +81,7 @@ class GameState:
                                     'p2Ship_r':self.p2SHIP_r,
                                     'p1Shot':self.p1Shot,
                                     'p2Shot':self.p2Shot,
-                                    'startGame':self.startGame,
+                                    'start':self.startGame,
                                     })
         self.player1_Conn.sendData(return_string)
         self.player2_Conn.sendData(return_string)
