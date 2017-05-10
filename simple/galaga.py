@@ -267,8 +267,7 @@ class Galaga:
 		self.outgoingConn = obj
 
 	def handleData(self, data):
-		if data['beginthegame'] == '1':
-			self.begin = 1
+		self.begin = int(data['beginthegame'])
 
 		if data['p1Ship_l'] == '1':
 			self.player1.move_one(0)

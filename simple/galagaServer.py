@@ -77,6 +77,7 @@ class GameState:
 
 
         return_string = json.dumps({
+                                    'beginthegame':self.starGame,
                                     'p1Ship_l':self.p1SHIP_l,
                                     'p1Ship_r':self.p1SHIP_r,
                                     'p2Ship_l':self.p2SHIP_l,
@@ -119,8 +120,6 @@ class Player1_Connection(Protocol):
 
     def getPlayer2_Connection(self, player2_conn):
         self.player2_conn = player2_conn
-        string = json.dumps({'beginthegame':'1'})
-        self.sendData(string)
 
 class Player1_ConnFactory(Factory):
 
