@@ -232,12 +232,8 @@ class Galaga:
 				if event.key == pygame.K_ESCAPE:
 					sys.exit(0)
 				if event.key == 276 or event.key == 275 or event.key == 32:
-					if not self.enemies:
-						print("fuck fuck")
-						self.sendData(event.key, 1)
-					else:
-						print("sending data")
-						self.sendData(event.key, 0)
+					self.sendData(event.key)
+
 		try:
 			#check collisions
 			dead1=pygame.sprite.groupcollide(self.enemies, self.bullets1,0,0)
@@ -273,13 +269,15 @@ class Galaga:
 			self.bullets1.update()
 			self.bullets2.update()
 			#draw enemies
-			if not self.enemies and self.set == 1:
-				for _ in range(5):
-					wily = WilyEnemy(self.enemies)
-					wily.set_pos(10,10)
-					wily.set_speed(self.newx, self.newy)
-					self.enemies.add(wily)
-				self.set = 0
+			if not self.enemies:
+				self.sendData(0)
+				if self.set == 1:
+					for _ in range(5):
+						wily = WilyEnemy(self.enemies)
+						wily.set_pos(10,10)
+						wily.set_speed(self.newx, self.newy)
+						self.enemies.add(wily)
+					self.set = 0
 			self.enemies.clear(self.screen, self.background)
 			self.enemylist+=self.enemies.draw(self.screen)
 
@@ -291,15 +289,13 @@ class Galaga:
 
 		pygame.display.flip()
 
-	def sendData(self, keyNum, random):
+	def sendData(self, keyNum):
 		if self.isPlayer1:
 			self.outgoingConn.transport.write("1:" + str(keyNum))
 		else:
 			self.outgoingConn.transport.write("2:" + str(keyNum))
-		if random == 1:
-			self.outgoingConn.transport.write("3:" + str(random))
-		else:
-			self.outgoingConn.transport.write("3:" + '0')
+		if keyNum == 0:
+			self.outgoingConn.transport.write("3:1")
 
 	def transferConnectionObject(self, obj):
 		self.outgoingConn = obj
@@ -318,9 +314,9 @@ class Galaga:
 		elif data['p2Shot'] == '1':
 			self.player2.shoot(self.bullets2, self.player2.rect.centerx, self.player2.rect.top)
 		if data['speedSet'] == '1':
-			print("getting speeds")
 			self.newx = int(data['speedx'])
 			self.newy = int(data['speedy'])
+			self.set = 1
 
 if __name__ == "__main__":
 	game=Galaga(1)

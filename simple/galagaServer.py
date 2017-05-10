@@ -22,22 +22,6 @@ PLAYER2_HOST = ""
 # Global deferred queue, handles input from both players
 dq = DeferredQueue()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 class GameState:
     #def main(self):
     def __init__(self):
@@ -118,24 +102,7 @@ class GameState:
         self.player2_Conn.sendData(return_string)
         dq.get().addCallback(self.decode_data) # after decode data, reattach callback
 
-
-
-
-
-
-
-
-
-
-
-
 gs = GameState()
-
-
-
-
-
-
 
 class Player1_Connection(Protocol):
 
