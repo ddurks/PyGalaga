@@ -164,8 +164,11 @@ class Bullet(pygame.sprite.Sprite):
 class Galaga:
 	def __init__(self, playerNum):
 		self.isPlayer1 = False
+		self.begin = 0
 		if playerNum == 1:
 			self.isPlayer1 = True
+		if playerNum == 2:
+			self.sendData("0")
 		pygame.init()
 		self.screen = pygame.display.set_mode ((WIN_RESX, WIN_RESY))
 		self.background = load_image("images/stars.bmp")
@@ -233,7 +236,7 @@ class Galaga:
 		#draw enemies
 		try:
 
-			if not self.enemies:
+			if not self.enemies and self.begin:
 				for i in range(5):
 					wily = WilyEnemy(self.enemies)
 					wily.set_pos(400,300)
@@ -272,6 +275,8 @@ class Galaga:
 			self.player1.shoot(self.bullets1, self.player1.rect.centerx, self.player1.rect.top)
 		elif data['p2Shot'] == '1':
 			self.player2.shoot(self.bullets2, self.player2.rect.centerx, self.player2.rect.top)
+		if data['startGame'] == '1':
+			self.begin = 1
 
 if __name__ == "__main__":
 	game=Galaga(1)
