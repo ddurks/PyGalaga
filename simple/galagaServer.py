@@ -8,7 +8,6 @@ from twisted.internet.protocol import Protocol
 from twisted.internet import reactor
 from twisted.internet.defer import DeferredQueue
 from twisted.internet.task import LoopingCall
-import random
 import json
 # import globalvars
 
@@ -22,6 +21,22 @@ PLAYER2_HOST = ""
 # Global deferred queue, handles input from both players
 dq = DeferredQueue()
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 class GameState:
     #def main(self):
     def __init__(self):
@@ -31,9 +46,6 @@ class GameState:
         self.p2SHIP_l = '0'
         self.p1Shot = '0'
         self.p2Shot = '0'
-        self.randx = 0
-        self.randy = 0
-        self.set = 0
 
     def getPlayer1_Connection(self, p1CONN):
         self.player1_Conn = p1CONN
@@ -49,9 +61,6 @@ class GameState:
         self.p2SHIP_r = '0'
         self.p1Shot = '0'
         self.p2Shot ='0'
-        self.randx = 0
-        self.randy = 0
-        self.set = 0
 
         dataList = data.split(":")
         if dataList[1] == '-1':
@@ -74,18 +83,12 @@ class GameState:
             elif dataList[1] == '32':
                 self.p2Shot = '1'
 
-        elif dataList[0] == '3':
-            if dataList[1] == '1':
-                self.randx = random.randrange(-15,15)
-                self.randy = random.randrange(-15,15)
-                self.set = 1
-            else:
-                self.randx = 0
-                self.randy = 0
-                self.set = 0
-
         else:
             print "Error: unexpected data sent from Player"
+
+        # self.applyBoosts() # if either player ran over a boost, apply it
+        # self.checkWinner() # check at each tick if a player has won
+
 
         return_string = json.dumps({
                                     'p1Ship_l':self.p1SHIP_l,
@@ -94,15 +97,29 @@ class GameState:
                                     'p2Ship_r':self.p2SHIP_r,
                                     'p1Shot':self.p1Shot,
                                     'p2Shot':self.p2Shot,
-                                    'speedx':str(self.randx),
-                                    'speedy':str(self.randy),
-                                    'speedSet':str(self.set),
                                     })
         self.player1_Conn.sendData(return_string)
         self.player2_Conn.sendData(return_string)
         dq.get().addCallback(self.decode_data) # after decode data, reattach callback
 
+
+
+
+
+
+
+
+
+
+
+
 gs = GameState()
+
+
+
+
+
+
 
 class Player1_Connection(Protocol):
 
