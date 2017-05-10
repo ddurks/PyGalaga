@@ -193,8 +193,8 @@ class Galaga:
 
 	def tick(self):
 
-		if self.isPlayer2:
-			self.sendData("0")
+		#if self.isPlayer2:
+		#	self.sendData("0")
 
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:

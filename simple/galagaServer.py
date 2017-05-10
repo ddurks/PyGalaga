@@ -82,8 +82,7 @@ class GameState:
                                     'p2Ship_l':self.p2SHIP_l,
                                     'p2Ship_r':self.p2SHIP_r,
                                     'p1Shot':self.p1Shot,
-                                    'p2Shot':self.p2Shot,
-                                    'startthegame':self.startGame
+                                    'p2Shot':self.p2Shot
                                     })
         self.player1_Conn.sendData(return_string)
         self.player2_Conn.sendData(return_string)
@@ -120,6 +119,8 @@ class Player1_Connection(Protocol):
 
     def getPlayer2_Connection(self, player2_conn):
         self.player2_conn = player2_conn
+        string = json.dumps({'start':'1'})
+        self.sendData(string)
 
 class Player1_ConnFactory(Factory):
 
