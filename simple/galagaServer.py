@@ -54,7 +54,7 @@ class GameState:
         self.player2_Conn = p2CONN
 
     def decode_data(self, data):
-        
+
         self.p1SHIP_l = '0'
         self.p1SHIP_r = '0'
         self.p2SHIP_l = '0'
@@ -64,7 +64,7 @@ class GameState:
         if dataList[1] == '-1':
             return
         if dataList[0] == '1':
-            # MARIO
+
             if dataList[1] == '275': # RIGHT
                 self.p1SHIP_r = '1'
             elif dataList[1] == '276': # LEFT
@@ -73,7 +73,7 @@ class GameState:
                 self.p1Shot = '1'
 
         elif dataList[0] == '2':
-			# YOSHI
+
             if dataList[1] == '275': # RIGHT
                 self.p2SHIP_r = '1'
             elif dataList[1] == '276': # LEFT
@@ -93,6 +93,8 @@ class GameState:
                                     'p1Ship_r':self.p1SHIP_r,
                                     'p2Ship_l':self.p2SHIP_l,
                                     'p2Ship_r':self.p2SHIP_r,
+                                    'p1Shot':self.p1Shot,
+                                    'p2Shot':self.p2Shot
                                     })
         self.player1_Conn.sendData(return_string)
         self.player2_Conn.sendData(return_string)

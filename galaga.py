@@ -163,6 +163,8 @@ class Galaga:
 					Menu(("Press Enter To Continue", "Press Q or esc to Quit"))
 				if event.key == pygame.K_ESCAPE:
 					sys.exit(0)
+				if event.key == pygame.K_SPACE:
+					print(event.key)
 				if event.key == 276 or event.key == 275 or event.key == 32:
 					self.sendData(event.key)
 

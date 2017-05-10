@@ -78,7 +78,7 @@ class Bullet(pygame.sprite.Sprite):
 		pygame.sprite.Sprite.__init__(self)
 		self.image = load_image('images/player_laser.bmp')
 		self.rect = self.image.get_rect()
-		self.bspeed=globalvars.BULLET_SPEED
+		self.bspeed=10
 		self.health=1
 
 	def set_pos(self, tempx,tempy):
@@ -135,8 +135,8 @@ class Galaga:
 		self.screen.blit(self.background, self.bgrect)
 		self.screen.blit(self.player1.image, self.player1.rect)
 		self.screen.blit(self.player2.image, self.player2.rect)
-		self.bullets1.clear(self.screen, self.background)
-		self.bullets2.clear(self.screen, self.background)
+		#self.bullets1.clear(self.screen, self.background)
+		#self.bullets2.clear(self.screen, self.background)
 		self.bulletlist+=self.bullets1.draw(self.screen, self.background)
 		self.bulletlist+=self.bullets2.draw(self.screen, self.background)
 
