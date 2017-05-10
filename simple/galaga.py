@@ -167,9 +167,6 @@ class Galaga:
 		self.begin = 0
 		if playerNum == 1:
 			self.isPlayer1 = True
-		if playerNum == 2:
-			self.isPlayer1 = True
-			self.sendData("0")
 		pygame.init()
 		self.screen = pygame.display.set_mode ((WIN_RESX, WIN_RESY))
 		self.background = load_image("images/stars.bmp")
@@ -192,6 +189,9 @@ class Galaga:
 		pygame.key.set_repeat(1,30)
 
 	def tick(self):
+
+		if self.isPlayer1 == False:
+			self.sendData("0")
 
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
