@@ -193,6 +193,9 @@ class Galaga:
 
 	def tick(self):
 
+		if not self.isPlayer1:
+			self.sendData('100')
+
 
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
@@ -238,7 +241,7 @@ class Galaga:
 		#draw enemies
 		try:
 
-			if not self.enemies:
+			if not self.enemies and self.begin:
 				for i in range(5):
 					wily = WilyEnemy(self.enemies)
 					wily.set_pos(400,300)
@@ -278,3 +281,6 @@ class Galaga:
 			self.player1.shoot(self.bullets1, self.player1.rect.centerx, self.player1.rect.top)
 		elif data['p2Shot'] == '1':
 			self.player2.shoot(self.bullets2, self.player2.rect.centerx, self.player2.rect.top)
+
+		if data['beginGame'] == '1':
+			self.begin == 1

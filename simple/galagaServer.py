@@ -68,6 +68,8 @@ class GameState:
                 self.p2SHIP_l = '1'
             elif dataList[1] == '32':
                 self.p2Shot = '1'
+            elif dataList[1] == '100':
+                self.startGame = '1'
 
         else:
             print "Error: unexpected data sent from Player"
@@ -79,7 +81,8 @@ class GameState:
                                     'p2Ship_l':self.p2SHIP_l,
                                     'p2Ship_r':self.p2SHIP_r,
                                     'p1Shot':self.p1Shot,
-                                    'p2Shot':self.p2Shot
+                                    'p2Shot':self.p2Shot,
+                                    'beginGame':self.startGame
                                     })
         self.player1_Conn.sendData(return_string)
         self.player2_Conn.sendData(return_string)
