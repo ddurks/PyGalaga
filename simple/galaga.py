@@ -193,8 +193,6 @@ class Galaga:
 
 	def tick(self):
 
-		#if self.isPlayer2:
-		#	self.sendData("0")
 
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
@@ -240,7 +238,7 @@ class Galaga:
 		#draw enemies
 		try:
 
-			if not self.enemies and self.begin:
+			if not self.enemies:
 				for i in range(5):
 					wily = WilyEnemy(self.enemies)
 					wily.set_pos(400,300)
@@ -267,7 +265,6 @@ class Galaga:
 		self.outgoingConn = obj
 
 	def handleData(self, data):
-		self.begin = int(data['beginthegame'])
 
 		if data['p1Ship_l'] == '1':
 			self.player1.move_one(0)

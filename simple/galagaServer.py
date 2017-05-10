@@ -61,23 +61,19 @@ class GameState:
                 self.p1Shot = '1'
 
         elif dataList[0] == '2':
-
+            print('p2 here')
             if dataList[1] == '275': # RIGHT
                 self.p2SHIP_r = '1'
             elif dataList[1] == '276': # LEFT
                 self.p2SHIP_l = '1'
             elif dataList[1] == '32':
                 self.p2Shot = '1'
-            elif dataList[1] == '0':
-                print('ready to start')
-                self.startGame = '1'
 
         else:
             print "Error: unexpected data sent from Player"
 
 
         return_string = json.dumps({
-                                    'beginthegame':self.starGame,
                                     'p1Ship_l':self.p1SHIP_l,
                                     'p1Ship_r':self.p1SHIP_r,
                                     'p2Ship_l':self.p2SHIP_l,
