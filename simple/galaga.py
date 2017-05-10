@@ -78,8 +78,8 @@ class WilyEnemy(pygame.sprite.Sprite):
 	def __init__(self, parent):
 		self.parent=parent
 		pygame.sprite.Sprite.__init__(self)
-		self.enxspeed=random.randrange(-25,25)
-		self.enyspeed=random.randrange(-25,25)
+		self.enxspeed=0
+		self.enyspeed=0
 		self.en_xmax=WIN_RESX
 		self.en_xmin=0
 		self.en_Y_MAX=WIN_RESY-100
@@ -88,7 +88,6 @@ class WilyEnemy(pygame.sprite.Sprite):
 		self.wily_ship = (load_image('images/wily_ship.bmp'))
 		self.image= self.wily_ship
 		self.rect = self.image.get_rect()
-		self.step = 0
 		self.threshold = random.randrange(25,75)
 		self.explosions=[]
 		self.explosions.append(load_image('images/boom1.bmp'))
@@ -100,22 +99,17 @@ class WilyEnemy(pygame.sprite.Sprite):
 	def is_wily(self):
 		return True
 
-	def set_pos(self):
-		self.rect.move_ip(random.randrange(self.en_xmin,self.en_xmax),random.randrange(self.en_Y_MIN,self.en_Y_MAX-150))
+	def set_pos(self,x,y):
+		self.rect.move_ip(x,y)
 
 	def set_speed(self, speed):
-		self.enspeed=speed
+		self.enxspeed=speed[0]
+		self.enyspeed=speed[1]
 
 	def get_range(self):
 		return self.en_xmin,self.en_xmax
 
 	def update(self):
-		if self.step >= self.threshold:
-			self.enxspeed = random.randrange(-15,15)
-			self.enyspeed = random.randrange(-15,15)
-			self.step = 0
-			self.threshold = random.randrange(25,75)
-		self.step += 1
 
 		if (self.rect.x <0) or (self.rect.x > self.en_xmax):
 			self.enxspeed *= -1
@@ -189,6 +183,7 @@ class Galaga:
 		self.enemylist = []
 		self.gs = pygame.display.get_surface()
 		self.s = pygame.Surface((WIN_RESX,WIN_RESY))
+		self.speed=[(-5,5),(-12,8),(10,14),(-8,-16),(7,7)]
 
 		pygame.key.set_repeat(1,30)
 
@@ -239,9 +234,10 @@ class Galaga:
 		try:
 
 			if not self.enemies:
-				for _ in range(5):
+				for i in range(5):
 					wily = WilyEnemy(self.enemies)
-					wily.set_pos()
+					wily.set_pos(400,300)
+					wily.set_speed(self.speed[i])
 					self.enemies.add(wily)
 			self.enemies.clear(self.screen, self.background)
 			self.enemylist+=self.enemies.draw(self.screen)
