@@ -30,7 +30,6 @@ class Player(pygame.sprite.Sprite):
 		self.state=0
 		self.speed=10
 		self.bullets=20
-				#bullets.set_bullets(20)
 
 	def get_pos(self):
 		return self.rect
@@ -40,10 +39,12 @@ class Player(pygame.sprite.Sprite):
 
 	def move_one(self,direction):
 		if direction == 1:
-			self.rect.move_ip(self.speed,0)
+			if self.rect.right <= WIN_RESX:
+				self.rect.move_ip(self.speed,0)
 
 		elif direction == 0:
-			self.rect.move_ip((-1)*self.speed,0)
+			if self.rect.left >= 0:
+				self.rect.move_ip((-1)*self.speed,0)
 
 
 	def set_pos(self, tempx,tempy):
@@ -70,6 +71,30 @@ class Player(pygame.sprite.Sprite):
 				self.state=0
 				self.image=self.player_ship[0]
 
+class Bullet(pygame.sprite.Sprite):
+
+	def __init__(self, parentlist):
+		self.parentlist=parentlist
+		pygame.sprite.Sprite.__init__(self)
+		self.image = load_image('images/player_laser.bmp')
+		self.rect = self.image.get_rect()
+		self.bspeed=globalvars.BULLET_SPEED
+		self.health=1
+
+	def set_pos(self, tempx,tempy):
+		self.rect.move_ip(tempx,tempy)
+
+	def set_hit(self):
+		self.health-=1
+
+	def set_speed(self, speed):
+		self.bspeed=speed
+
+	def update(self):
+		self.rect.move_ip(0,-1*(self.bspeed))
+		if self.rect.bottom <= 0 or self.health <= 0:
+			self.parentlist.remove(self)
+
 class Galaga:
 	def __init__(self, playerNum):
 		self.isPlayer1 = False
@@ -85,6 +110,9 @@ class Galaga:
 		self.player2=Player()
 		self.player1.set_pos(400,550)
 		self.player2.set_pos(400,550)
+		self.bullets1 = pygame.sprite.RenderUpdates()
+		self.bullets2 = pygame.sprite.RenderUpdates()
+		self.bulletlist = []
 
 		pygame.key.set_repeat(1,30)
 
@@ -107,7 +135,12 @@ class Galaga:
 		self.screen.blit(self.background, self.bgrect)
 		self.screen.blit(self.player1.image, self.player1.rect)
 		self.screen.blit(self.player2.image, self.player2.rect)
+		self.bullets1.clear(self.screen, self.background)
+		self.bullets2.clear(self.screen, self.background)
+		self.bulletlist+=self.bullets1.draw(self.screen, self.background)
+		self.bulletlist+=self.bullets2.draw(self.screen, self.background)
 
+		pygame.display.update(self.bulletlist)
 		pygame.display.flip()
 
 	def sendData(self, keyNum):
@@ -128,6 +161,10 @@ class Galaga:
 			self.player2.move_one(0)
 		elif data['p2Ship_r'] == '1':
 			self.player2.move_one(1)
+		if data['p1Shot'] == '1':
+			self.player1.shoot(self.bullets1, self.player1.rect.centerx, self.player1.rect.top)
+		elif data['p2Shot'] == '1':
+			self.player2.shoot(self.bullets2, self.player2.rect.centerx, self.player2.rect.top)
 
 
 if __name__ == "__main__":

@@ -54,13 +54,13 @@ if __name__ == "__main__":
     # Set up a twisted LoopingCall for server ticks, bind it to the game tick
     if sys.argv[1] == 'host':
         game = Galaga(1)
-        DESIRED_FPS = 60.0
+        DESIRED_FPS = 30.0
         tick = LoopingCall(game.tick)
         tick.start(1.0 / DESIRED_FPS)
         reactor.connectTCP(GAME_SERVER, PORT1, PlayerConnectionFactory(game))
     elif sys.argv[1] == 'join':
         game = Galaga(2)
-        DESIRED_FPS = 60.0
+        DESIRED_FPS = 30.0
         tick = LoopingCall(game.tick)
         tick.start(1.0 / DESIRED_FPS)
         reactor.connectTCP(GAME_SERVER, PORT2, PlayerConnectionFactory(game))

@@ -44,135 +44,17 @@ class GameState:
         self.p1SHIP_l = '0'
         self.p2SHIP_r = '0'
         self.p2SHIP_l = '0'
-        '''
-        self.boost1_taken = False
-        self.boost2_taken = False
-        self.boost3_taken = False
-        self.boost4_taken = False
-        self.banana1_taken = False
-        self.banana2_taken = False
-        self.banana3_taken = False
-        self.mario_speed = 5
-        self.yoshi_speed = 5
-        self.mario_in_banana = False
-        self.yoshi_in_banana = False
+        self.p1Shot = '0'
+        self.p2Shot = '0'
 
-        self.mario_was_in_box = False
-        self.yoshi_was_in_box = False
-        self.mario_cross_finish_line = False
-        self.yoshi_cross_finish_line = False
-
-        self.mario_won = False
-        self.yoshi_won = False
-
-        self.finish_start_x = 433
-        '''
     def getPlayer1_Connection(self, p1CONN):
         self.player1_Conn = p1CONN
 
     def getPlayer2_Connection(self, p2CONN):
         self.player2_Conn = p2CONN
-    '''
-    def checkWinner(self):
-        self.mario_was_in_box = True
-        self.yoshi_was_in_box = True
-        if self.p1SHIP_x > self.finish_start_x and self.p1SHIP_x < self.finish_start_x + 15 and self.p1SHIP_y < 257:
-            print 'mario in finish box'
-            if self.mario_was_in_box and self.mario_cross_finish_line:
-                self.mario_won = True
-                print 'mario won'
-        elif self.p1SHIP_x < self.finish_start_x and self.p1SHIP_y < 257:
-            self.mario_cross_finish_line = True
-
-        if self.p2SHIP_x > self.finish_start_x and self.p2SHIP_x < self.finish_start_x + 15 and self.p2SHIP_y < 257:
-            print 'yoshi in finish box'
-            if self.yoshi_was_in_box and self.yoshi_cross_finish_line:
-                self.yoshi_won = True
-                print 'yoshi won'
-        elif self.p2SHIP_x < self.finish_start_x and self.p2SHIP_y < 257:
-            self.yoshi_cross_finish_line = True
-
-    def check_track_bound(self, x, y):
-		# If out of bounds, return false. If safe, return true
-        if x <= 110 or x >= 1070 or y <= 110 or y >= 774:
-            return False
-        if y >= 250 and y <= 670 and x >= 255 and x <= 920:
-            return False
-        return True
-
-    def applyBoosts(self):
-        if not self.boost1_taken:
-            # boost1 is still open for the taking
-            if self.p1SHIP_x >= 320 and self.p1SHIP_x <= 345 and self.p1SHIP_y >= 160 and self.p1SHIP_y <= 185:
-                self.mario_speed += 1
-                self.boost1_taken = True
-            elif self.p2SHIP_x >= 320 and self.p2SHIP_x <= 345 and self.p2SHIP_y >= 160 and self.p2SHIP_y <= 185:
-                self.yoshi_speed += 1
-                self.boost1_taken = True
-
-        if not self.boost2_taken:
-            # boost2 is still open for the taking
-            if self.p1SHIP_x >= 140 and self.p1SHIP_x <= 165 and self.p1SHIP_y >= 420 and self.p1SHIP_y <= 445:
-                self.mario_speed += 2
-                self.boost2_taken = True
-            elif self.p2SHIP_x >= 140 and self.p2SHIP_x <= 165 and self.p2SHIP_y >= 420 and self.p2SHIP_y <= 445:
-                self.yoshi_speed += 2
-                self.boost2_taken = True
-
-        if not self.boost3_taken:
-            # boost4 is still open for the taking
-            if self.p1SHIP_x >= 530 and self.p1SHIP_x <= 555 and self.p1SHIP_y >= 710 and self.p1SHIP_y <= 735:
-                self.mario_speed += 3
-                self.boost3_taken = True
-            elif self.p2SHIP_x >= 530 and self.p2SHIP_x <= 555 and self.p2SHIP_y >= 710 and self.p2SHIP_y <= 735:
-                self.yoshi_speed += 3
-                self.boost3_taken = True
-
-        if not self.boost4_taken:
-            # boost3 is still open for the taking
-            if self.p1SHIP_x >= 930 and self.p1SHIP_x <= 955 and self.p1SHIP_y >= 490 and self.p1SHIP_y <= 515:
-                self.mario_speed += 4
-                self.boost4_taken = True
-            elif self.p2SHIP_x >= 930 and self.p2SHIP_x <= 955 and self.p2SHIP_y >= 490 and self.p2SHIP_y <= 515:
-                self.yoshi_speed += 4
-                self.boost4_taken = True
-
-    def apply_banana(self):
-        if not self.banana1_taken:
-            if self.p1SHIP_x >= 160 and self.p1SHIP_x <= 185 and self.p1SHIP_y >= 216 and self.p1SHIP_y <= 245:
-                self.mario_in_banana = True
-                self.banana1_taken = True
-            elif self.p2SHIP_x >= 160 and self.p2SHIP_x <= 185 and self.p2SHIP_y >= 216 and self.p2SHIP_y <= 245:
-                self.yoshi_in_banana = True
-                self.banana1_taken = True
-        else:
-            self.mario_in_banana = False
-            self.yoshi_in_banana = False
-        if not self.banana2_taken:
-            if self.p1SHIP_x >= 356 and self.p1SHIP_x <= 381 and self.p1SHIP_y >= 755 and self.p1SHIP_y <= 780:
-                self.mario_in_banana = True
-                self.banana2_taken = True
-            elif self.p2SHIP_x >= 356 and self.p2SHIP_x <= 381 and self.p2SHIP_y >= 755 and self.p1SHIP_y <= 780:
-                self.yoshi_in_banana = True
-                self.banana2_taken = True
-        else:
-            self.mario_in_banana = False
-            self.yoshi_in_banana = False
-        if not self.banana3_taken:
-            if self.p1SHIP_x >= 620 and self.p1SHIP_x <= 645 and self.p1SHIP_y >= 174 and self.p1SHIP_y <= 199:
-                self.mario_in_banana = True
-                self.banana3_taken = True
-            elif self.p2SHIP_x >= 620 and self.p2SHIP_x <= 645 and self.p2SHIP_y >= 174 and self.p2SHIP_y <= 199:
-                self.yoshi_in_banana = True
-                self.banana3_taken = True
-        else:
-            self.mario_in_banana = False
-            self.yoshi_in_banana = False
-    '''
 
     def decode_data(self, data):
-
-
+        
         self.p1SHIP_l = '0'
         self.p1SHIP_r = '0'
         self.p2SHIP_l = '0'
@@ -187,6 +69,8 @@ class GameState:
                 self.p1SHIP_r = '1'
             elif dataList[1] == '276': # LEFT
                 self.p1SHIP_l = '1'
+            elif dataList[1] == '32':
+                self.p1Shot = '1'
 
         elif dataList[0] == '2':
 			# YOSHI
@@ -194,6 +78,8 @@ class GameState:
                 self.p2SHIP_r = '1'
             elif dataList[1] == '276': # LEFT
                 self.p2SHIP_l = '1'
+            elif dataList[1] == '32':
+                self.p2Shot = '1'
 
         else:
             print "Error: unexpected data sent from Player"
