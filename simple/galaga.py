@@ -71,6 +71,78 @@ class Player(pygame.sprite.Sprite):
 				self.state=0
 				self.image=self.player_ship[0]
 
+class WilyEnemy(pygame.sprite.Sprite):
+	enx=0
+	eny=30
+
+	def __init__(self, parent):
+		self.parent=parent
+		pygame.sprite.Sprite.__init__(self)
+		self.enxspeed=random.randrange(-25,25)
+		self.enyspeed=random.randrange(-25,25)
+		self.en_xmax=WIN_RESX
+		self.en_xmin=0
+		self.en_Y_MAX=WIN_RESY-100
+		self.en_Y_MIN=0
+		self.en_state=-1
+		self.wily_ship = (load_image('images/wily_ship.bmp'))
+		self.image= self.wily_ship
+		self.rect = self.image.get_rect()
+		self.step = 0
+		self.threshold = random.randrange(25,75)
+		self.explosions=[]
+		self.explosions.append(load_image('images/boom1.bmp'))
+		self.explosions.append(load_image('images/boom2.bmp'))
+		self.explosions.append(load_image('images/boom3.bmp'))
+		self.explosions.append(load_image('images/boom4.bmp'))
+		self.explosions.append(load_image('images/boom5.bmp'))
+
+	def is_wily(self):
+		return True
+
+	def set_pos(self):
+		self.rect.move_ip(random.randrange(self.en_xmin,self.en_xmax),random.randrange(self.en_Y_MIN,self.en_Y_MAX-150))
+
+	def set_speed(self, speed):
+		self.enspeed=speed
+
+	def get_range(self):
+		return self.en_xmin,self.en_xmax
+
+	def update(self):
+		if self.step >= self.threshold:
+			self.enxspeed = random.randrange(-15,15)
+			self.enyspeed = random.randrange(-15,15)
+			self.step = 0
+			self.threshold = random.randrange(25,75)
+		self.step += 1
+
+		if (self.rect.x <0) or (self.rect.x > self.en_xmax):
+			self.enxspeed *= -1
+		if (self.rect.y<0) or (self.rect.y > self.en_Y_MAX-150):
+			self.enyspeed *= -1
+
+		self.rect.move_ip(self.enxspeed, self.enyspeed)
+		self.next_state()
+
+	def set_state(self, varr):
+		self.en_state=varr
+
+	def next_state(self):
+		if self.en_state>=0 and self.en_state<5:
+			self.image=self.explosions[self.en_state]
+			self.en_state+=1
+		elif self.en_state>4:
+			self.parent.remove(self)
+
+	def get_state(self):
+		return self.en_state
+
+	def shoot(self,shotslist):
+		tempb=EnemyBullet(shotslist)
+		tempb.set_pos(self.rect.left+self.rect.width/2,self.rect.bottom)
+		shotslist.add(tempb)
+
 class Bullet(pygame.sprite.Sprite):
 
 	def __init__(self, parentlist):
@@ -112,7 +184,11 @@ class Galaga:
 		self.player2.set_pos(400,550)
 		self.bullets1 = pygame.sprite.RenderUpdates()
 		self.bullets2 = pygame.sprite.RenderUpdates()
+		self.enemies = pygame.sprite.RenderUpdates()
 		self.bulletlist = []
+		self.enemylist = []
+		self.gs = pygame.display.get_surface()
+		self.s = pygame.Surface((WIN_RESX,WIN_RESY))
 
 		pygame.key.set_repeat(1,30)
 
@@ -132,21 +208,50 @@ class Galaga:
 				if event.key == 276 or event.key == 275 or event.key == 32:
 					self.sendData(event.key)
 
+		#check collisions
+		dead1=pygame.sprite.groupcollide(self.enemies, self.bullets1,0,0)
+		dead2=pygame.sprite.groupcollide(self.enemies, self.bullets2,0,0)
+		for enemy,bullet in dead1.iteritems():
+			self.bullets1.remove(bullet)
+			enemy.set_state(0)
+			#points.add_points(1)
+			self.player1.bullets += 5
+			##bullets.add_bullets(5)
+		for enemy,bullet in dead2.iteritems():
+			self.bullets2.remove(bullet)
+			enemy.set_state(0)
+			#points.add_points(1)
+			self.player2.bullets += 5
+			##bullets.add_bullets(5)
+
+		#draw players
 		self.screen.blit(self.background, self.bgrect)
 		self.screen.blit(self.player1.image, self.player1.rect)
 		self.screen.blit(self.player2.image, self.player2.rect)
+		#draw bullets
+		self.bullets1.clear(self.screen, self.background)
+		self.bullets2.clear(self.screen, self.background)
+		self.bulletlist+=self.bullets1.draw(self.screen)
+		self.bulletlist+=self.bullets2.draw(self.screen)
+		self.bullets1.update()
+		self.bullets2.update()
+		#draw enemies
 		try:
-			self.bullets1.clear(self.screen, self.background)
-			self.bullets2.clear(self.screen, self.background)
-			self.bulletlist+=self.bullets1.draw(self.screen)
-			self.bulletlist+=self.bullets2.draw(self.screen)
-			self.bullets1.update()
-			self.bullets2.update()
+
+			if not self.enemies:
+				for _ in range(5):
+					wily = WilyEnemy(self.enemies)
+					wily.set_pos()
+					self.enemies.add(wily)
+			self.enemies.clear(self.screen, self.background)
+			self.enemylist+=self.enemies.draw(self.screen)
+
+			self.enemies.update()
+			#pygame.display.update(self.bulletlist)
+			#pygame.display.update(self.enemylist)
 		except Exception as e:
 			print(e)
 
-
-		pygame.display.update(self.bulletlist)
 		pygame.display.flip()
 
 	def sendData(self, keyNum):
@@ -171,7 +276,6 @@ class Galaga:
 			self.player1.shoot(self.bullets1, self.player1.rect.centerx, self.player1.rect.top)
 		elif data['p2Shot'] == '1':
 			self.player2.shoot(self.bullets2, self.player2.rect.centerx, self.player2.rect.top)
-
 
 if __name__ == "__main__":
 	game=Galaga(1)
