@@ -1,221 +1,157 @@
+
 import pygame, os, sys, math, random
+from pygame.locals import*
+import globalvars
+from sprites import Player, Enemy, WilyEnemy, EnemyManager, Bullet, EnemyBullet, bgstars
+from display import *
+from menu import Menu
 from twisted.internet import reactor
-
-global WIN_RESX, WIN_RESY
-WIN_RESX=800
-WIN_RESY=600
-
-global CLOCK
-CLOCK = pygame.time.Clock()
-
-def load_image(name):
-	try:
-		imgfile=name
-		return pygame.image.load(imgfile).convert()
-	except:
-		print( "Failed while loading " + name )
-
-class Player(pygame.sprite.Sprite):
-
-	def __init__(self):
-		pygame.sprite.Sprite.__init__(self)
-		self.player_ship = []
-		self.player_ship.append(load_image('images/player_ship.bmp'))
-		self.player_ship.append(load_image('images/player_ship1.bmp'))
-		self.player_ship.append(load_image('images/player_ship2.bmp'))
-		self.player_ship.append(load_image('images/player_ship3.bmp'))
-
-		self.image= self.player_ship[0]
-		self.rect = self.image.get_rect()
-		self.state=0
-		self.speed=10
-		self.bullets=20
-
-	def get_pos(self):
-		return self.rect
-
-	def move(self, x,y):
-		self.rect.topleft=(x,y)
-
-	def move_one(self,direction):
-		if direction == 1:
-			if self.rect.right <= WIN_RESX:
-				self.rect.move_ip(self.speed,0)
-
-		elif direction == 0:
-			if self.rect.left >= 0:
-				self.rect.move_ip((-1)*self.speed,0)
-
-
-	def set_pos(self, tempx,tempy):
-		self.rect.move_ip(tempx,tempy)
-
-	def set_hit(self):
-		self.state=1
-
-	def shoot(self,shotslist,locx,locy):
-		if(self.bullets > 0):
-			self.boom=Bullet(shotslist)
-			self.boom.set_pos(locx,locy)
-			shotslist.add(self.boom)
-			self.bullets -= 1
-						#bullets.sub_bullets(1)
-		else:
-			print("out of bullets")
-
-	def update(self):
-		if self.state > 0:
-			self.image=self.player_ship[self.state/explosion_speed]
-			self.state+=1
-			if self.state >= len(self.player_ship)*explosion_speed:
-				self.state=0
-				self.image=self.player_ship[0]
-
-class WilyEnemy(pygame.sprite.Sprite):
-	enx=0
-	eny=30
-
-	def __init__(self, parent):
-		self.parent=parent
-		pygame.sprite.Sprite.__init__(self)
-		self.enxspeed=random.randrange(-25,25)
-		self.enyspeed=random.randrange(-25,25)
-		self.en_xmax=WIN_RESX
-		self.en_xmin=0
-		self.en_Y_MAX=WIN_RESY-100
-		self.en_Y_MIN=0
-		self.en_state=-1
-		self.wily_ship = (load_image('images/wily_ship.bmp'))
-		self.image= self.wily_ship
-		self.rect = self.image.get_rect()
-		self.step = 0
-		self.threshold = random.randrange(25,75)
-
-	def is_wily(self):
-		return True
-
-	def set_pos(self):
-		self.rect.move_ip(random.randrange(self.en_xmin,self.en_xmax),random.randrange(self.en_Y_MIN,self.en_Y_MAX-150))
-
-	def set_speed(self, speed):
-		self.enspeed=speed
-
-	def get_range(self):
-		return self.en_xmin,self.en_xmax
-
-	def update(self):
-		if self.step >= self.threshold:
-			self.enxspeed = random.randrange(-25,25)
-			self.enyspeed = random.randrange(-25,25)
-			self.step = 0
-			self.threshold = random.randrange(25,75)
-		self.step += 1
-
-		if (self.rect.x <0) or (self.rect.x > self.en_xmax):
-			self.enxspeed *= -1
-		if (self.rect.y<0) or (self.rect.y > self.en_Y_MAX-150):
-			self.enyspeed *= -1
-
-		self.rect.move_ip(self.enxspeed, self.enyspeed)
-		self.next_state()
-
-	def set_state(self, varr):
-		self.en_state=varr
-
-	def next_state(self):
-		if self.en_state>=0 and self.en_state<5:
-			self.image=explosions[self.en_state]
-			self.en_state+=1
-		elif self.en_state>4:
-			self.parent.remove(self)
-
-	def get_state(self):
-		return self.en_state
-
-	def shoot(self,shotslist):
-		tempb=EnemyBullet(shotslist)
-		tempb.set_pos(self.rect.left+self.rect.width/2,self.rect.bottom)
-		shotslist.add(tempb)
-
-class EnemyManager(pygame.sprite.RenderUpdates):
-	def __init__(self):
-		pygame.sprite.RenderUpdates.__init__(self)
-		self.frames=0
-		self.transition_speed=5
-		self.transition_time=150/self.transition_speed
-		self.current_transition=0
-
-	def shoot(self,shotslist):
-		self.frames=random.randint(0,15)
-		if self.frames < len(self):
-			self.sprites()[self.frames].shoot(shotslist)
-
-	def update(self):
-		if self.current_transition<self.transition_time:
-			for e in self:
-				if(e.is_wily() == True):
-					e.update()
-				else:
-					e.update(self.transition_speed)
-			self.current_transition+=1
-		else:
-			for e in self:
-				if(e.is_wily() == True):
-					e.update()
-				else:
-					e.update(0)
-
-class Bullet(pygame.sprite.Sprite):
-
-	def __init__(self, parentlist):
-		self.parentlist=parentlist
-		pygame.sprite.Sprite.__init__(self)
-		self.image = load_image('images/player_laser.bmp')
-		self.rect = self.image.get_rect()
-		self.bspeed=10
-		self.health=1
-
-	def set_pos(self, tempx,tempy):
-		self.rect.move_ip(tempx,tempy)
-
-	def set_hit(self):
-		self.health-=1
-
-	def set_speed(self, speed):
-		self.bspeed=speed
-
-	def update(self):
-		self.rect.move_ip(0,-1*(self.bspeed))
-		if self.rect.bottom <= 0 or self.health <= 0:
-			self.parentlist.remove(self)
 
 class Galaga:
 	def __init__(self, playerNum):
 		self.isPlayer1 = False
 		if playerNum == 1:
 			self.isPlayer1 = True
+		globalvars.frames = 0
+
 		pygame.init()
-		self.screen = pygame.display.set_mode ((WIN_RESX, WIN_RESY))
-		self.background = load_image("images/stars.bmp")
-		self.bgrect = self.background.get_rect()
-		pygame.display.set_caption("PyGalaga")
-		self.screen.fill((0,0,0))
+		self.lagcount=0
+		self.enemy_list=[]
+		self.list_enemies=EnemyManager()
+		self.level=level(self.list_enemies,globalvars.PLAYERS)
+		self.ally_bullets=pygame.sprite.RenderUpdates()
+		self.enemy_bullets=pygame.sprite.RenderUpdates()
+
+	def start(self):
+		self.clear()
 		self.player1=Player()
 		self.player2=Player()
-		self.player1.set_pos(400,550)
-		self.player2.set_pos(400,550)
-		self.bullets1 = pygame.sprite.RenderUpdates()
-		self.bullets2 = pygame.sprite.RenderUpdates()
-		self.enemies = EnemyManager()
-		self.bulletlist = []
-		self.enemylist = []
-		self.gs = pygame.display.get_surface()
-		self.s = pygame.Surface((WIN_RESX,WIN_RESY))
+		globalvars.PLAYERS.add(self.player1)
+		globalvars.PLAYERS.add(self.player2)
+		self.player1.set_pos(globalvars.x,globalvars.y)
+		self.player2.set_pos(globalvars.x,globalvars.y)
+		self.loop()
 
-		pygame.key.set_repeat(1,30)
+	def clear(self):
+		self.leftkeydown=0
+		self.rightkeydown=0
+		#health.set_health(globalvars.max_health)
+		#points.set_points(0)
+		globalvars.x=400
+		globalvars.y=globalvars.WIN_RESY-60
+		self.level.set_level(-1) #hax
+		globalvars.enemy_bullet_odds=100
+		self.list_enemies.empty()
+		self.ally_bullets.empty()
+		globalvars.PLAYERS.empty()
+		self.enemy_bullets.empty()
+		print ("Restart")
+
+	def player_move(self, x,y):
+		globalvars.PLAYERS.clear(globalvars.surface,globalvars.screen)
+		self.enemy_list+=globalvars.PLAYERS.draw(globalvars.surface)
+
+	def enemy_move(self):
+		self.list_enemies.clear(globalvars.surface, globalvars.screen)
+		self.enemy_list+=self.list_enemies.draw(globalvars.surface)
+
+	def draw_enemies(self):
+		for _ in range(self.level.get_levelnum()):
+			wily = WilyEnemy(self.list_enemies)
+			wily.set_pos()
+			self.list_enemies.add(wily)
+
+		for enemycol in range(self.level.get_level()[0]):
+			for enemyrow in range(self.level.get_level()[1]):
+				tempenemy=Enemy(self.list_enemies)
+				tempenemy.set_pos(globalvars.X_MIN+enemycol*(globalvars.enemy_width+globalvars.enemy_spacing_x),globalvars.Y_MIN+enemyrow*(globalvars.enemy_height+globalvars.enemy_spacing_y)-150)
+				tempenemy.set_range(globalvars.X_MIN+enemycol*(globalvars.enemy_width+globalvars.enemy_spacing_x),globalvars.X_MAX-(self.level.get_level()[0]-enemycol)*(globalvars.enemy_height+globalvars.enemy_spacing_x))
+				self.list_enemies.add(tempenemy)
+
+	def check_collision(self):
+		todie=pygame.sprite.groupcollide(self.list_enemies, self.ally_bullets,0,0)
+		for enemy,bullet in todie.iteritems():
+			self.ally_bullets.remove(bullet)
+			enemy.set_state(0)
+			#points.add_points(1)
+			self.player1.bullets += 5
+			##bullets.add_bullets(5)
+		if pygame.sprite.spritecollideany(self.player1, self.enemy_bullets):
+			self.player1.set_hit()
+			#health.hit()
+
+	def check_over(self):
+		if not self.list_enemies:
+			self.level.next_level()
+			self.draw_enemies()
+			self.player1.bullets += 10
+			#bullets.add_bullets(10)
+
+	def check_rows(self):
+		if globalvars.frames % 20==0:
+			highest=globalvars.X_MIN
+			lowest=globalvars.X_MAX
+			for enemy in self.list_enemies:
+				if enemy.get_range()[1] > highest:
+					highest=enemy.get_range()[1]
+				if enemy.get_range()[0] < lowest:
+					lowest=enemy.get_range()[0]
+			highest=globalvars.X_MAX-highest
+			lowest=lowest-globalvars.X_MIN
+			if highest != 0 or lowest != 0:
+				for enemy in self.list_enemies:
+					e_range=enemy.get_range()
+					enemy.set_range(e_range[0]-lowest,e_range[1]+highest)
+
+	def again(self):
+		'''
+				if health.get_health() <= 0:
+						return False
+				return True
+		'''
+		return True
+
+
+	def pshoot(self, sx, sy):
+		self.player1.shoot(self.ally_bullets,sx,sy)
+
+	def drawbullets(self):
+		self.ally_bullets.clear(globalvars.surface,globalvars.screen)
+		self.enemy_bullets.clear(globalvars.surface,globalvars.screen)
+		self.enemy_list+=self.ally_bullets.draw(globalvars.surface)
+		self.enemy_list+=self.enemy_bullets.draw(globalvars.surface)
+
+	def draw_stats(self):
+		if globalvars.frames%5==0:
+			globalvars.SIDE_PANEL.update()
+		globalvars.SIDE_PANEL.clear(globalvars.surface,globalvars.screen)
+		self.enemy_list+=globalvars.SIDE_PANEL.draw(globalvars.surface)
+
+	def check(self):
+		self.check_over()
+		self.check_collision()
+		self.check_rows()
+		bgstars.update()
+		self.list_enemies.shoot(self.enemy_bullets)
+		self.player1.update()
+		self.player2.update()
+		#print(self.player.bullets)
+
+	def draw(self):
+		self.enemy_list+=bgstars.draw()
+		self.enemy_list+=bgstars.clear()
+		self.drawbullets()
+		self.player_move(globalvars.x,globalvars.y)
+		self.enemy_move()
+		self.draw_stats()
+
+	def clear_screen(self):
+		globalvars.surface.fill(globalvars.bgcolor)
+		pygame.display.flip()
 
 	def tick(self):
 
+		pygame.event.pump()
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				reactor.stop()
@@ -224,41 +160,37 @@ class Galaga:
 				if event.key == pygame.K_q:
 					sys.exit(0)
 				if event.key == pygame.K_p:
-					sys.exit(0)
+					Menu(("Press Enter To Continue", "Press Q or esc to Quit"))
 				if event.key == pygame.K_ESCAPE:
 					sys.exit(0)
+				if event.key == pygame.K_SPACE:
+					print(event.key)
 				if event.key == 276 or event.key == 275 or event.key == 32:
 					self.sendData(event.key)
 
-		#draw players
-		self.screen.blit(self.background, self.bgrect)
-		self.screen.blit(self.player1.image, self.player1.rect)
-		self.screen.blit(self.player2.image, self.player2.rect)
-		#draw bullets
-		self.bullets1.clear(self.screen, self.background)
-		self.bullets2.clear(self.screen, self.background)
-		self.bulletlist+=self.bullets1.draw(self.screen)
-		self.bulletlist+=self.bullets2.draw(self.screen)
-		#draw enemies
-		try:
+		self.ally_bullets.update()
+		self.list_enemies.update()
+		self.enemy_bullets.update()
 
-			print(self.enemylist)
-			if not self.enemies:
-				for _ in range(5):
-					print("making enemies")
-					wily = WilyEnemy(self.enemies)
-					wily.set_pos()
-					self.enemies.add(wily)
-			self.enemies.clear(self.screen, self.background)
-			self.enemylist+=self.enemies.draw(self.screen)
-		except Exception as e:
-			print(e)
+		pygame.event.clear()
 
-		self.bulletlist.update()
-		self.enemies.update()
-		pygame.display.update(self.bulletlist)
-		pygame.display.update(self.enemylist)
-		pygame.display.flip()
+	def loop(self):
+		while self.again():
+
+			if globalvars.frames>=globalvars.REFRESH_TIME:
+				globalvars.frames=0
+			globalvars.frames+=1
+
+			self.check()
+
+			self.draw()
+
+			self.tick()
+
+			pygame.display.update(self.enemy_list)
+			self.enemy_list=[]
+
+			timeittook=globalvars.CLOCK.tick(globalvars.FPS)
 
 	def sendData(self, keyNum):
 		if self.isPlayer1:
@@ -278,10 +210,36 @@ class Galaga:
 			self.player2.move_one(0)
 		elif data['p2Ship_r'] == '1':
 			self.player2.move_one(1)
-		if data['p1Shot'] == '1':
-			self.player1.shoot(self.bullets1, self.player1.rect.centerx, self.player1.rect.top)
-		elif data['p2Shot'] == '1':
-			self.player2.shoot(self.bullets2, self.player2.rect.centerx, self.player2.rect.top)
+
+class level:
+	enemy_levels=[(4,2),(5,3),(6,4)]
+	current_level=0
+
+	def __init__(self,enemymanager,playermanager):
+		self.enemymanager=enemymanager
+		self.playermanager=playermanager
+
+	def next_level(self):
+		if len(self.enemy_levels) > self.current_level+1:
+			self.current_level+=1
+		if globalvars.enemy_bullet_odds > 15:
+			globalvars.enemy_bullet_odds-=15
+		self.enemymanager.current_transition=0
+
+	def set_level(self, level):
+		self.current_level=level
+
+	def get_level(self):
+		return self.enemy_levels[self.current_level]
+
+	def get_levelnum(self):
+		return self.current_level + 1
 
 if __name__ == "__main__":
 	game=Galaga(1)
+	Menu(("Press Enter To Begin", "Press Q or esc to Exit"))
+
+	game.start()
+	while Menu(("Score: "'''%points.get_points()''',"Press Enter to Return to Main")):
+		Menu(("Press Enter To Begin", "Press Q or esc to Exit"))
+		game.start()

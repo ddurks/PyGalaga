@@ -71,6 +71,7 @@ class Player(pygame.sprite.Sprite):
 				self.state=0
 				self.image=self.player_ship[0]
 
+<<<<<<< HEAD
 class WilyEnemy(pygame.sprite.Sprite):
 	enx=0
 	eny=30
@@ -137,6 +138,8 @@ class WilyEnemy(pygame.sprite.Sprite):
 		tempb.set_pos(self.rect.left+self.rect.width/2,self.rect.bottom)
 		shotslist.add(tempb)
 
+=======
+>>>>>>> parent of b042f5d... enemies working
 class Bullet(pygame.sprite.Sprite):
 
 	def __init__(self, parentlist):
@@ -182,12 +185,14 @@ class Galaga:
 		self.player2.set_pos(400,550)
 		self.bullets1 = pygame.sprite.RenderUpdates()
 		self.bullets2 = pygame.sprite.RenderUpdates()
-		self.enemies = pygame.sprite.RenderUpdates()
 		self.bulletlist = []
+<<<<<<< HEAD
 		self.enemylist = []
 		self.gs = pygame.display.get_surface()
 		self.s = pygame.Surface((WIN_RESX,WIN_RESY))
 		self.speed=[(-5,5),(-12,8),(10,14),(-8,-16),(7,7)]
+=======
+>>>>>>> parent of b042f5d... enemies working
 
 		pygame.key.set_repeat(1,30)
 
@@ -214,35 +219,11 @@ class Galaga:
 				if event.key == 276 or event.key == 275 or event.key == 32:
 					self.sendData(event.key)
 
-		#check collisions
-		dead1=pygame.sprite.groupcollide(self.enemies, self.bullets1,0,0)
-		dead2=pygame.sprite.groupcollide(self.enemies, self.bullets2,0,0)
-		for enemy,bullet in dead1.iteritems():
-			self.bullets1.remove(bullet)
-			enemy.set_state(0)
-			#points.add_points(1)
-			self.player1.bullets += 5
-			##bullets.add_bullets(5)
-		for enemy,bullet in dead2.iteritems():
-			self.bullets2.remove(bullet)
-			enemy.set_state(0)
-			#points.add_points(1)
-			self.player2.bullets += 5
-			##bullets.add_bullets(5)
-
-		#draw players
 		self.screen.blit(self.background, self.bgrect)
 		self.screen.blit(self.player1.image, self.player1.rect)
 		self.screen.blit(self.player2.image, self.player2.rect)
-		#draw bullets
-		self.bullets1.clear(self.screen, self.background)
-		self.bullets2.clear(self.screen, self.background)
-		self.bulletlist+=self.bullets1.draw(self.screen)
-		self.bulletlist+=self.bullets2.draw(self.screen)
-		self.bullets1.update()
-		self.bullets2.update()
-		#draw enemies
 		try:
+<<<<<<< HEAD
 
 			if not self.enemies and self.begin:
 				for i in range(5):
@@ -256,9 +237,19 @@ class Galaga:
 			self.enemies.update()
 			#pygame.display.update(self.bulletlist)
 			#pygame.display.update(self.enemylist)
+=======
+			self.bullets1.clear(self.screen, self.background)
+			self.bullets2.clear(self.screen, self.background)
+			self.bulletlist+=self.bullets1.draw(self.screen)
+			self.bulletlist+=self.bullets2.draw(self.screen)
+			self.bullets1.update()
+			self.bullets2.update()
+>>>>>>> parent of b042f5d... enemies working
 		except Exception as e:
 			print(e)
 
+
+		pygame.display.update(self.bulletlist)
 		pygame.display.flip()
 
 	def sendData(self, keyNum):
@@ -285,5 +276,11 @@ class Galaga:
 		elif data['p2Shot'] == '1':
 			self.player2.shoot(self.bullets2, self.player2.rect.centerx, self.player2.rect.top)
 
+<<<<<<< HEAD
 		if data['beginGame'] == '1':
 			self.begin == 1
+=======
+
+if __name__ == "__main__":
+	game=Galaga(1)
+>>>>>>> parent of b042f5d... enemies working
