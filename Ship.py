@@ -15,7 +15,7 @@ from twisted.internet import reactor
 from galaga import Galaga
 from twisted.internet.task import LoopingCall
 
-GAME_SERVER = 'newt.campus.nd.edu'
+GAME_SERVER = 'ash.campus.nd.edu'
 PORT1 = 40009
 PORT2 = 40021
 
@@ -24,7 +24,6 @@ class PlayerConnection(LineReceiver):
     def __init__(self, game):
         self.game = game
         self.game.transferConnectionObject(self)
-        self.game.start()
 
     def lineReceived(self, line):
         self.handleReceivedData(line)
@@ -55,13 +54,13 @@ if __name__ == "__main__":
     # Set up a twisted LoopingCall for server ticks, bind it to the game tick
     if sys.argv[1] == 'host':
         game = Galaga(1)
-        DESIRED_FPS = 60.0
+        DESIRED_FPS = 30.0
         tick = LoopingCall(game.tick)
         tick.start(1.0 / DESIRED_FPS)
         reactor.connectTCP(GAME_SERVER, PORT1, PlayerConnectionFactory(game))
     elif sys.argv[1] == 'join':
         game = Galaga(2)
-        DESIRED_FPS = 60.0
+        DESIRED_FPS = 30.0
         tick = LoopingCall(game.tick)
         tick.start(1.0 / DESIRED_FPS)
         reactor.connectTCP(GAME_SERVER, PORT2, PlayerConnectionFactory(game))
