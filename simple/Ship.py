@@ -15,7 +15,7 @@ from twisted.internet import reactor
 from galaga import Galaga
 from twisted.internet.task import LoopingCall
 
-GAME_SERVER = 'newt.campus.nd.edu'
+GAME_SERVER = 'ash.campus.nd.edu'
 PORT1 = 40009
 PORT2 = 40021
 
@@ -60,11 +60,10 @@ if __name__ == "__main__":
         reactor.connectTCP(GAME_SERVER, PORT1, PlayerConnectionFactory(game))
     elif sys.argv[1] == 'join':
         game = Galaga(2)
-        reactor.connectTCP(GAME_SERVER, PORT2, PlayerConnectionFactory(game))
         DESIRED_FPS = 30.0
         tick = LoopingCall(game.tick)
         tick.start(1.0 / DESIRED_FPS)
-
+        reactor.connectTCP(GAME_SERVER, PORT2, PlayerConnectionFactory(game))
     else:
         print "Please invoke program with correct arguments."
         sys.exit(0)

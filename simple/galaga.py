@@ -71,7 +71,6 @@ class Player(pygame.sprite.Sprite):
 				self.state=0
 				self.image=self.player_ship[0]
 
-<<<<<<< HEAD
 class WilyEnemy(pygame.sprite.Sprite):
 	enx=0
 	eny=30
@@ -79,8 +78,8 @@ class WilyEnemy(pygame.sprite.Sprite):
 	def __init__(self, parent):
 		self.parent=parent
 		pygame.sprite.Sprite.__init__(self)
-		self.enxspeed=0
-		self.enyspeed=0
+		self.enxspeed=random.randrange(-25,25)
+		self.enyspeed=random.randrange(-25,25)
 		self.en_xmax=WIN_RESX
 		self.en_xmin=0
 		self.en_Y_MAX=WIN_RESY-100
@@ -89,6 +88,7 @@ class WilyEnemy(pygame.sprite.Sprite):
 		self.wily_ship = (load_image('images/wily_ship.bmp'))
 		self.image= self.wily_ship
 		self.rect = self.image.get_rect()
+		self.step = 0
 		self.threshold = random.randrange(25,75)
 		self.explosions=[]
 		self.explosions.append(load_image('images/boom1.bmp'))
@@ -100,17 +100,22 @@ class WilyEnemy(pygame.sprite.Sprite):
 	def is_wily(self):
 		return True
 
-	def set_pos(self,x,y):
-		self.rect.move_ip(x,y)
+	def set_pos(self):
+		self.rect.move_ip(random.randrange(self.en_xmin,self.en_xmax),random.randrange(self.en_Y_MIN,self.en_Y_MAX-150))
 
 	def set_speed(self, speed):
-		self.enxspeed=speed[0]
-		self.enyspeed=speed[1]
+		self.enspeed=speed
 
 	def get_range(self):
 		return self.en_xmin,self.en_xmax
 
 	def update(self):
+		if self.step >= self.threshold:
+			self.enxspeed = random.randrange(-15,15)
+			self.enyspeed = random.randrange(-15,15)
+			self.step = 0
+			self.threshold = random.randrange(25,75)
+		self.step += 1
 
 		if (self.rect.x <0) or (self.rect.x > self.en_xmax):
 			self.enxspeed *= -1
@@ -138,8 +143,6 @@ class WilyEnemy(pygame.sprite.Sprite):
 		tempb.set_pos(self.rect.left+self.rect.width/2,self.rect.bottom)
 		shotslist.add(tempb)
 
-=======
->>>>>>> parent of b042f5d... enemies working
 class Bullet(pygame.sprite.Sprite):
 
 	def __init__(self, parentlist):
@@ -167,12 +170,8 @@ class Bullet(pygame.sprite.Sprite):
 class Galaga:
 	def __init__(self, playerNum):
 		self.isPlayer1 = False
-		self.isPlayer2 = False
-		self.begin = 0
 		if playerNum == 1:
 			self.isPlayer1 = True
-		if playerNum == 2:
-			self.isPlayer2 = True
 		pygame.init()
 		self.screen = pygame.display.set_mode ((WIN_RESX, WIN_RESY))
 		self.background = load_image("images/stars.bmp")
@@ -185,25 +184,15 @@ class Galaga:
 		self.player2.set_pos(400,550)
 		self.bullets1 = pygame.sprite.RenderUpdates()
 		self.bullets2 = pygame.sprite.RenderUpdates()
+		self.enemies = pygame.sprite.RenderUpdates()
 		self.bulletlist = []
-<<<<<<< HEAD
 		self.enemylist = []
 		self.gs = pygame.display.get_surface()
 		self.s = pygame.Surface((WIN_RESX,WIN_RESY))
-		self.speed=[(-5,5),(-12,8),(10,14),(-8,-16),(7,7)]
-=======
->>>>>>> parent of b042f5d... enemies working
 
 		pygame.key.set_repeat(1,30)
 
 	def tick(self):
-
-		try:
-			if not self.isPlayer1:
-				self.sendData('100')
-		except Exception as e:
-			print(e)
-
 
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
@@ -219,17 +208,40 @@ class Galaga:
 				if event.key == 276 or event.key == 275 or event.key == 32:
 					self.sendData(event.key)
 
+		#check collisions
+		dead1=pygame.sprite.groupcollide(self.enemies, self.bullets1,0,0)
+		dead2=pygame.sprite.groupcollide(self.enemies, self.bullets2,0,0)
+		for enemy,bullet in dead1.iteritems():
+			self.bullets1.remove(bullet)
+			enemy.set_state(0)
+			#points.add_points(1)
+			self.player1.bullets += 5
+			##bullets.add_bullets(5)
+		for enemy,bullet in dead2.iteritems():
+			self.bullets2.remove(bullet)
+			enemy.set_state(0)
+			#points.add_points(1)
+			self.player2.bullets += 5
+			##bullets.add_bullets(5)
+
+		#draw players
 		self.screen.blit(self.background, self.bgrect)
 		self.screen.blit(self.player1.image, self.player1.rect)
 		self.screen.blit(self.player2.image, self.player2.rect)
+		#draw bullets
+		self.bullets1.clear(self.screen, self.background)
+		self.bullets2.clear(self.screen, self.background)
+		self.bulletlist+=self.bullets1.draw(self.screen)
+		self.bulletlist+=self.bullets2.draw(self.screen)
+		self.bullets1.update()
+		self.bullets2.update()
+		#draw enemies
 		try:
-<<<<<<< HEAD
 
-			if not self.enemies and self.begin:
-				for i in range(5):
+			if not self.enemies:
+				for _ in range(5):
 					wily = WilyEnemy(self.enemies)
-					wily.set_pos(400,300)
-					wily.set_speed(self.speed[i])
+					wily.set_pos()
 					self.enemies.add(wily)
 			self.enemies.clear(self.screen, self.background)
 			self.enemylist+=self.enemies.draw(self.screen)
@@ -237,19 +249,9 @@ class Galaga:
 			self.enemies.update()
 			#pygame.display.update(self.bulletlist)
 			#pygame.display.update(self.enemylist)
-=======
-			self.bullets1.clear(self.screen, self.background)
-			self.bullets2.clear(self.screen, self.background)
-			self.bulletlist+=self.bullets1.draw(self.screen)
-			self.bulletlist+=self.bullets2.draw(self.screen)
-			self.bullets1.update()
-			self.bullets2.update()
->>>>>>> parent of b042f5d... enemies working
 		except Exception as e:
 			print(e)
 
-
-		pygame.display.update(self.bulletlist)
 		pygame.display.flip()
 
 	def sendData(self, keyNum):
@@ -262,7 +264,6 @@ class Galaga:
 		self.outgoingConn = obj
 
 	def handleData(self, data):
-
 		if data['p1Ship_l'] == '1':
 			self.player1.move_one(0)
 		elif data['p1Ship_r'] == '1':
@@ -276,11 +277,5 @@ class Galaga:
 		elif data['p2Shot'] == '1':
 			self.player2.shoot(self.bullets2, self.player2.rect.centerx, self.player2.rect.top)
 
-<<<<<<< HEAD
-		if data['beginGame'] == '1':
-			self.begin == 1
-=======
-
 if __name__ == "__main__":
 	game=Galaga(1)
->>>>>>> parent of b042f5d... enemies working
